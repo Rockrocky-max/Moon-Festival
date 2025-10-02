@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>中秋節能量小測驗 v1.94</title>
+  <title>中秋節 × 四能量測驗 v1.95</title>
   <style>
     body {
       font-family: "Microsoft JhengHei", sans-serif;
       margin: 0;
       padding: 0;
       text-align: center;
-      line-height: 1.5;
+      line-height: 1.6;
     }
-    h1, h2 {
+    h1, h2, h3 {
       font-size: clamp(20px, 2.5vw, 28px);
     }
     p, li, button {
@@ -27,7 +27,7 @@
     }
     .container {
       padding: 20px;
-      max-width: 800px;
+      max-width: 900px;
       margin: auto;
     }
     .option {
@@ -35,7 +35,7 @@
       margin: 10px auto;
       padding: 12px;
       width: 90%;
-      max-width: 400px;
+      max-width: 500px;
       background: #f2f2f2;
       border: 1px solid #ccc;
       border-radius: 8px;
@@ -45,7 +45,7 @@
     .option:hover {
       background: #e0e0e0;
     }
-    #result, #record {
+    #result, #record, #analysis {
       margin-top: 20px;
       padding: 15px;
       background: #f9f9f9;
@@ -65,7 +65,8 @@
   <div class="container" id="quiz-container">
     <!-- 首頁 -->
     <div id="start-screen">
-      <h1>🌕 中秋節能量小測驗</h1>
+      <h1>🌕 中秋節 × 四能量測驗</h1>
+      <p>🎯「從你怎麼過中秋，看見你的天賦能量」</p>
       <img src="00.jpg" alt="首頁圖片">
       <button onclick="startQuiz()">開始測驗</button>
     </div>
@@ -82,39 +83,60 @@
       <p id="result"></p>
       <div id="result-img"></div>
       <div id="record"></div>
+      <div id="analysis">
+        <h3>✅ 分析說明：</h3>
+        <p>統計你選了哪一個英文字母（A/B/C/D）最多次：</p>
+        <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse; width:100%; text-align:center;">
+          <tr>
+            <th>選項</th><th>能量類型</th><th>關鍵詞</th><th>節日風格</th>
+          </tr>
+          <tr>
+            <td>A</td><td>發電型</td><td>行動、冒險、衝勁</td><td>節日活動發起人、氣氛帶動者</td>
+          </tr>
+          <tr>
+            <td>B</td><td>火焰型</td><td>表現、交流、感受</td><td>節日人氣王、自拍分享好手</td>
+          </tr>
+          <tr>
+            <td>C</td><td>節奏型</td><td>安穩、溫暖、照顧</td><td>家族支柱、溫柔照顧者</td>
+          </tr>
+          <tr>
+            <td>D</td><td>鋼鐵型</td><td>分析、結構、預測</td><td>節日控管者、流程總召</td>
+          </tr>
+        </table>
+      </div>
       <button class="copy-btn" onclick="copyResult()">📋 複製結果</button>
     </div>
   </div>
 
   <script>
     const questions = [
-      "1. 中秋節最期待的活動是？",
-      "2. 如果要選一種月餅，你會選？",
-      "3. 中秋聚會時，你最常扮演的角色？",
-      "4. 中秋烤肉時，你最關心的是？",
-      "5. 賞月時你會做什麼？",
-      "6. 如果雲遮住了月亮，你會？",
-      "7. 中秋節聯想到的動物是？",
-      "8. 如果要送朋友中秋禮，你會選？",
-      "9. 中秋節在你心中代表什麼？",
-      "10. 每年中秋節最重要的是什麼？"
+      "1. 中秋節當天你最期待的是？",
+      "2. 烤肉現場大家都不太動作，你會？",
+      "3. 別人送你月餅禮盒，你最在意的是？",
+      "4. 如果你是中秋晚會主辦人，你最想規劃什麼？",
+      "5. 有人建議中秋節改成「賞月靜心日」，你會？",
+      "6. 中秋節聚會人太多、場地太小時你會？",
+      "7. 對你來說，「月亮」代表什麼？",
+      "8. 如果你負責中秋晚會的拍攝，你會？",
+      "9. 中秋節月圓之夜，你會？",
+      "10. 活動即將結束，你會？"
     ];
 
     const options = [
-      ["A. 熱鬧烤肉", "B. 看煙火", "C. 聽音樂聚會", "D. 規劃活動"],
-      ["A. 蛋黃酥", "B. 冰皮月餅", "C. 水果月餅", "D. 廣式月餅"],
-      ["A. 氣氛帶動者", "B. 熱情炒熱者", "C. 節奏掌握者", "D. 組織安排者"],
-      ["A. 火候控制", "B. 食材多樣性", "C. 音樂氛圍", "D. 流程規劃"],
-      ["A. 拍照打卡", "B. 聊天分享", "C. 吹音樂或吟詩", "D. 解說月亮故事"],
-      ["A. 放煙火", "B. 轉而聊天", "C. 找其他樂趣", "D. 滑手機"],
-      ["A. 玉兔", "B. 鳳凰", "C. 鳴蟲", "D. 烏龜"],
-      ["A. DIY 烤肉組", "B. 燈籠", "C. 音樂卡帶", "D. 茶葉禮盒"],
-      ["A. 團聚", "B. 熱情", "C. 折扣", "D. 傳統"],
-      ["A. 辦不同的活動", "B. 找人參與", "C. 藉機享受折扣", "D.依循傳統活動"]
+      ["A. 烤肉大作戰！一定要吃最狂、烤最久！", "B. 能跟朋友自拍聊天、玩氣氛最棒！", "C. 家人團聚一起吃月餅配茶聊生活", "D. 行程清楚、流程順、準時開始準時收尾"],
+      ["A. 衝去生火、分工、抓人一起動起來", "B. 邊烤邊主持氣氛，還順便直播分享", "C. 默默補菜、照顧小孩、洗碗撿垃圾", "D. 把器材重新整理擺好，重排動線再重新分工"],
+      ["A. 是不是創新口味？比如珍奶、鹹蛋黃流沙？", "B. 有沒有好看的包裝，拍照起來超有感", "C. 老字號品牌，傳統味道最安心", "D. 成分、熱量、保存期限、每顆幾克都會看清楚"],
+      ["A. 有競賽、挑戰遊戲、拼誰烤得最快最準！", "B. 舞台表演、才藝秀、變裝派對，燈光音效全上", "C. 月光下野餐，大家一起圍坐談心吃甜點", "D. 時間表、動線圖、物資清單、流程表事先發好發滿"],
+      ["A. 太無聊了，我更喜歡熱鬧的節奏", "B. 不反對啦，但可以有表演或主題活動會更好", "C. 感覺還不錯，靜靜的氣氛挺療癒", "D. 要靜心也行，但我想先知道有沒有講義跟時間表"],
+      ["A. 當場找解法！人多一點才夠熱鬧～", "B. 利用空間自拍一下、到處串門子", "C. 找個角落慢慢烤肉、照顧一下老人小孩", "D. 立刻調整座位、重新分組、改善流程"],
+      ["A. 永恆又變化的神秘力量，有種冒險感", "B. 美的象徵，怎麼拍都很有意境！", "C. 家人團圓時的溫柔背景", "D. 天文現象，有周期、有陰晴、有規律"],
+      ["A. 拍大家大笑、玩遊戲的瞬間！要動感！", "B. 拍主角們，構圖美、光線佳，風格大片", "C. 拍大合照，記錄大家在一起的感覺", "D. 拍活動流程、表格、分工進行狀況做存檔"],
+      ["A. 去山上、海邊、夜跑、玩狼人殺——行動先行！", "B. 穿美美的衣服跟朋友聚會拍照分享", "C. 和家人一起泡茶聊天看月亮", "D. 拿出天文App，看月亮是幾點幾分最圓，再拍照存檔"],
+      ["A. 建議加碼再玩一輪！月亮還在，我也還在！", "B. 跟大家合照、加聯絡方式，延續熱度！", "C. 開始幫忙收東西，謝謝大家一起參加", "D. 開始做總結、列回饋表、規劃下次更好版本"]
     ];
 
-    const energyMap = { A: "發電機", B: "火焰", C: "節奏", D: "鋼鐵" };
-    const energyImg = { "發電機": "01.jpg", "火焰": "02.jpg", "節奏": "03.jpg", "鋼鐵": "04.jpg" };
+    const energyMap = { A: "發電型", B: "火焰型", C: "節奏型", D: "鋼鐵型" };
+    const energyImg = { "發電型": "01.jpg", "火焰型": "02.jpg", "節奏型": "03.jpg", "鋼鐵型": "04.jpg" };
 
     let currentQuestion = 0;
     let answers = [];
@@ -151,10 +173,10 @@
       document.getElementById("question-screen").style.display = "none";
       document.getElementById("result-screen").style.display = "block";
 
-      let summary = `🔋 A 發電機: ${counts.A} 題<br>
-🔥 B 火焰: ${counts.B} 題<br>
-🎵 C 節奏: ${counts.C} 題<br>
-🛠️ D 鋼鐵: ${counts.D} 題<br>`;
+      let summary = `🔋 A 發電型: ${counts.A} 題<br>
+🔥 B 火焰型: ${counts.B} 題<br>
+🎵 C 節奏型: ${counts.C} 題<br>
+🛠️ D 鋼鐵型: ${counts.D} 題<br>`;
 
       document.getElementById("result").innerHTML = summary;
 
@@ -171,8 +193,8 @@
     }
 
     function copyResult() {
-      let text = "【中秋節能量小測驗 - 作答紀錄】\n";
-      text += `A 發電機: ${counts.A} 題\nB 火焰: ${counts.B} 題\nC 節奏: ${counts.C} 題\nD 鋼鐵: ${counts.D} 題\n\n`;
+      let text = "【中秋節 × 四能量測驗 - 作答紀錄】\n";
+      text += `A 發電型: ${counts.A} 題\nB 火焰型: ${counts.B} 題\nC 節奏型: ${counts.C} 題\nD 鋼鐵型: ${counts.D} 題\n\n`;
       text += answers.join("\n");
       navigator.clipboard.writeText(text).then(() => {
         alert("✅ 已複製到剪貼簿");
@@ -181,4 +203,3 @@
   </script>
 </body>
 </html>
-
