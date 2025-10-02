@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>中秋節能量小測驗 v1.93</title>
+  <title>中秋節能量小測驗 v1.94</title>
   <style>
     body {
       font-family: "Microsoft JhengHei", sans-serif;
@@ -80,6 +80,7 @@
     <div id="result-screen" style="display:none;">
       <h2>測驗結果</h2>
       <p id="result"></p>
+      <div id="result-img"></div>
       <div id="record"></div>
       <button class="copy-btn" onclick="copyResult()">📋 複製結果</button>
     </div>
@@ -96,7 +97,7 @@
       "7. 中秋節聯想到的動物是？",
       "8. 如果要送朋友中秋禮，你會選？",
       "9. 中秋節在你心中代表什麼？",
-      "10. 月亮最像什麼？"
+      "10. 每年中秋節最重要的是什麼？"
     ];
 
     const options = [
@@ -105,14 +106,15 @@
       ["A. 氣氛帶動者", "B. 熱情炒熱者", "C. 節奏掌握者", "D. 組織安排者"],
       ["A. 火候控制", "B. 食材多樣性", "C. 音樂氛圍", "D. 流程規劃"],
       ["A. 拍照打卡", "B. 聊天分享", "C. 吹音樂或吟詩", "D. 解說月亮故事"],
-      ["A. 想辦法補救", "B. 轉而聊天", "C. 找其他樂趣", "D. 研究天文"],
+      ["A. 放煙火", "B. 轉而聊天", "C. 找其他樂趣", "D. 滑手機"],
       ["A. 玉兔", "B. 鳳凰", "C. 鳴蟲", "D. 烏龜"],
       ["A. DIY 烤肉組", "B. 燈籠", "C. 音樂卡帶", "D. 茶葉禮盒"],
       ["A. 團聚", "B. 熱情", "C. 節奏", "D. 傳統"],
-      ["A. 發電機", "B. 火焰", "C. 節奏", "D. 鋼鐵"]
+      ["A. 辦不同的活動", "B. 找人參與", "C. 藉機享受折扣", "D.依循傳統活動"]
     ];
 
     const energyMap = { A: "發電機", B: "火焰", C: "節奏", D: "鋼鐵" };
+    const energyImg = { "發電機": "01.jpg", "火焰": "02.jpg", "節奏": "03.jpg", "鋼鐵": "04.jpg" };
 
     let currentQuestion = 0;
     let answers = [];
@@ -155,6 +157,12 @@
 🛠️ D 鋼鐵: ${counts.D} 題<br>`;
 
       document.getElementById("result").innerHTML = summary;
+
+      // 判斷最高分能量
+      let maxKey = Object.keys(counts).reduce((a, b) => counts[a] >= counts[b] ? a : b);
+      let topEnergy = energyMap[maxKey];
+      let imgPath = energyImg[topEnergy];
+      document.getElementById("result-img").innerHTML = `<h3>你的主要能量是：${topEnergy}</h3><img src="${imgPath}" alt="${topEnergy}圖片">`;
 
       let recordHtml = "<h3>📑 你的作答紀錄</h3><ul>";
       answers.forEach(a => recordHtml += `<li>${a}</li>`);
