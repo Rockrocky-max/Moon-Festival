@@ -2,194 +2,143 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>中秋節四能量小測驗 v1.91</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中秋節能量小測驗 v1.93</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: "Microsoft JhengHei", sans-serif;
+      margin: 0;
+      padding: 0;
       text-align: center;
-      background: #fdf6ec;
-      color: #333;
+      line-height: 1.5;
+    }
+    h1, h2 {
+      font-size: clamp(20px, 2.5vw, 28px);
+    }
+    p, li, button {
+      font-size: clamp(14px, 2vw, 18px);
+    }
+    img {
+      width: 100%;
+      height: auto;
+      max-width: 600px;
+      margin: 0 auto 20px;
+      display: block;
     }
     .container {
-      max-width: 700px;
-      margin: auto;
       padding: 20px;
+      max-width: 800px;
+      margin: auto;
     }
-    .question {
-      margin: 20px 0;
-      padding: 15px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      background: #fff;
-    }
-    button {
-      margin: 8px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      background: #ffcc66;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    button:hover {
-      background: #ffb84d;
-    }
-    .hidden { display: none; }
-    img {
-      max-width: 100%;
-      border-radius: 12px;
-    }
-    textarea {
+    .option {
+      display: block;
+      margin: 10px auto;
+      padding: 12px;
       width: 90%;
-      height: 120px;
-      margin-top: 10px;
-    }
-    .score-box {
-      margin: 15px auto;
-      padding: 10px;
-      border: 1px dashed #aaa;
-      border-radius: 8px;
-      background: #fff8e7;
       max-width: 400px;
+      background: #f2f2f2;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
     }
-    .log-box {
-      text-align: left;
-      margin: 20px auto;
-      padding: 10px;
+    .option:hover {
+      background: #e0e0e0;
+    }
+    #result, #record {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f9f9f9;
       border: 1px solid #ddd;
       border-radius: 8px;
-      background: #fafafa;
-      max-width: 600px;
+      text-align: left;
+    }
+    button.copy-btn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" id="quiz-container">
     <!-- 首頁 -->
-    <div id="start-page">
-      <h1>🌕 中秋節四能量小測驗</h1>
-      <img src="00.jpg" alt="中秋首頁">
-      <p>歡迎來玩！答完10題，就能知道你的中秋能量屬性！</p>
+    <div id="start-screen">
+      <h1>🌕 中秋節能量小測驗</h1>
+      <img src="00.jpg" alt="首頁圖片">
       <button onclick="startQuiz()">開始測驗</button>
     </div>
 
     <!-- 題目區 -->
-    <div id="quiz-page" class="hidden">
-      <h2 id="question-number"></h2>
-      <div id="question-container"></div>
+    <div id="question-screen" style="display:none;">
+      <h2 id="question-title"></h2>
+      <div id="options"></div>
     </div>
 
-    <!-- 結果區 -->
-    <div id="result-page" class="hidden">
-      <h2>🎉 測驗完成！</h2>
-      <p id="result-text"></p>
-      <img id="result-img" src="" alt="能量圖片">
-
-      <div class="score-box">
-        <h3>📊 四能量總計</h3>
-        <p id="score-summary"></p>
-      </div>
-
-      <h3>📒 你的作答紀錄</h3>
-      <div id="answer-log" class="log-box"></div>
-
-      <h3>📋 補充</h3>
-      <p>複製以下你的作答結果：</p>
-      <textarea id="copy-text"></textarea><br>
-      <button onclick="copyResult()">複製結果</button>
+    <!-- 結果頁 -->
+    <div id="result-screen" style="display:none;">
+      <h2>測驗結果</h2>
+      <p id="result"></p>
+      <div id="record"></div>
+      <button class="copy-btn" onclick="copyResult()">📋 複製結果</button>
     </div>
   </div>
 
   <script>
     const questions = [
-      {q: "1. 中秋節你最期待的是？", a: [
-        {text: "賞月", type:"發電機"},
-        {text: "吃月餅", type:"火焰"},
-        {text: "烤肉", type:"節奏"},
-        {text: "團聚聊天", type:"鋼鐵"}
-      ]},
-      {q: "2. 你最愛的中秋應景食物？", a: [
-        {text: "蛋黃酥", type:"發電機"},
-        {text: "冰皮月餅", type:"火焰"},
-        {text: "烤肉串", type:"節奏"},
-        {text: "文旦柚子", type:"鋼鐵"}
-      ]},
-      {q: "3. 中秋夜賞月，你會？", a: [
-        {text: "拍照發限動", type:"火焰"},
-        {text: "靜靜欣賞", type:"鋼鐵"},
-        {text: "邊烤肉邊看", type:"節奏"},
-        {text: "寫首詩", type:"發電機"}
-      ]},
-      {q: "4. 中秋節聚會時你通常是？", a: [
-        {text: "活動發起人", type:"發電機"},
-        {text: "炒熱氣氛的人", type:"火焰"},
-        {text: "烤肉達人", type:"節奏"},
-        {text: "默默幫忙收拾", type:"鋼鐵"}
-      ]},
-      {q: "5. 如果有中秋晚會，你最想參加？", a: [
-        {text: "燈謎比賽", type:"發電機"},
-        {text: "才藝表演", type:"火焰"},
-        {text: "趣味遊戲", type:"節奏"},
-        {text: "團康聊天", type:"鋼鐵"}
-      ]},
-      {q: "6. 中秋節最重要的元素是？", a: [
-        {text: "月亮", type:"發電機"},
-        {text: "熱鬧氣氛", type:"火焰"},
-        {text: "烤肉香味", type:"節奏"},
-        {text: "家人陪伴", type:"鋼鐵"}
-      ]},
-      {q: "7. 你會怎麼吃月餅？", a: [
-        {text: "細細品嚐", type:"鋼鐵"},
-        {text: "大口吃", type:"節奏"},
-        {text: "邊聊天邊吃", type:"火焰"},
-        {text: "邊思考邊吃", type:"發電機"}
-      ]},
-      {q: "8. 如果要送禮，你會送？", a: [
-        {text: "高檔月餅禮盒", type:"火焰"},
-        {text: "實用水果柚子", type:"鋼鐵"},
-        {text: "自己烤肉邀請卡", type:"節奏"},
-        {text: "自己寫的卡片", type:"發電機"}
-      ]},
-      {q: "9. 中秋節結束後你會？", a: [
-        {text: "回味月亮與詩意", type:"發電機"},
-        {text: "整理照片分享", type:"火焰"},
-        {text: "期待下次聚會", type:"節奏"},
-        {text: "收拾善後", type:"鋼鐵"}
-      ]},
-      {q: "10. 你覺得中秋最能代表的意義？", a: [
-        {text: "靈感與啟發", type:"發電機"},
-        {text: "快樂與熱情", type:"火焰"},
-        {text: "行動與參與", type:"節奏"},
-        {text: "穩定與守護", type:"鋼鐵"}
-      ]}
+      "1. 中秋節最期待的活動是？",
+      "2. 如果要選一種月餅，你會選？",
+      "3. 中秋聚會時，你最常扮演的角色？",
+      "4. 中秋烤肉時，你最關心的是？",
+      "5. 賞月時你會做什麼？",
+      "6. 如果雲遮住了月亮，你會？",
+      "7. 中秋節聯想到的動物是？",
+      "8. 如果要送朋友中秋禮，你會選？",
+      "9. 中秋節在你心中代表什麼？",
+      "10. 月亮最像什麼？"
     ];
 
-    let currentQ = 0;
-    let scores = {發電機:0, 火焰:0, 節奏:0, 鋼鐵:0};
-    let answersLog = [];
+    const options = [
+      ["A. 熱鬧烤肉", "B. 看煙火", "C. 聽音樂聚會", "D. 規劃活動"],
+      ["A. 蛋黃酥", "B. 冰皮月餅", "C. 水果月餅", "D. 廣式月餅"],
+      ["A. 氣氛帶動者", "B. 熱情炒熱者", "C. 節奏掌握者", "D. 組織安排者"],
+      ["A. 火候控制", "B. 食材多樣性", "C. 音樂氛圍", "D. 流程規劃"],
+      ["A. 拍照打卡", "B. 聊天分享", "C. 吹音樂或吟詩", "D. 解說月亮故事"],
+      ["A. 想辦法補救", "B. 轉而聊天", "C. 找其他樂趣", "D. 研究天文"],
+      ["A. 玉兔", "B. 鳳凰", "C. 鳴蟲", "D. 烏龜"],
+      ["A. DIY 烤肉組", "B. 燈籠", "C. 音樂卡帶", "D. 茶葉禮盒"],
+      ["A. 團聚", "B. 熱情", "C. 節奏", "D. 傳統"],
+      ["A. 發電機", "B. 火焰", "C. 節奏", "D. 鋼鐵"]
+    ];
+
+    const energyMap = { A: "發電機", B: "火焰", C: "節奏", D: "鋼鐵" };
+
+    let currentQuestion = 0;
+    let answers = [];
+    let counts = { A:0, B:0, C:0, D:0 };
 
     function startQuiz() {
-      document.getElementById("start-page").classList.add("hidden");
-      document.getElementById("quiz-page").classList.remove("hidden");
+      document.getElementById("start-screen").style.display = "none";
+      document.getElementById("question-screen").style.display = "block";
       showQuestion();
     }
 
     function showQuestion() {
-      const q = questions[currentQ];
-      document.getElementById("question-number").innerText = "題目 " + (currentQ+1) + " / " + questions.length;
-      let html = `<div class="question"><h3>${q.q}</h3>`;
-      q.a.forEach((ans, i)=>{
-        html += `<button onclick="selectAnswer('${ans.type}', '${ans.text}')">${ans.text}</button><br>`;
+      document.getElementById("question-title").innerText = questions[currentQuestion];
+      let opts = "";
+      options[currentQuestion].forEach((opt, idx) => {
+        const letter = ["A","B","C","D"][idx];
+        opts += `<button class="option" onclick="selectAnswer('${letter}')">${opt}</button>`;
       });
-      html += `</div>`;
-      document.getElementById("question-container").innerHTML = html;
+      document.getElementById("options").innerHTML = opts;
     }
 
-    function selectAnswer(type, text) {
-      scores[type]++;
-      answersLog.push(`Q${currentQ+1}: ${text}`);
-      currentQ++;
-      if(currentQ < questions.length){
+    function selectAnswer(choice) {
+      answers.push(`${questions[currentQuestion]} → ${choice} (${energyMap[choice]})`);
+      counts[choice]++;
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
         showQuestion();
       } else {
         showResult();
@@ -197,36 +146,29 @@
     }
 
     function showResult() {
-      document.getElementById("quiz-page").classList.add("hidden");
-      document.getElementById("result-page").classList.remove("hidden");
+      document.getElementById("question-screen").style.display = "none";
+      document.getElementById("result-screen").style.display = "block";
 
-      // 找出最高分
-      let maxType = Object.keys(scores).reduce((a,b)=> scores[a] > scores[b] ? a : b);
-      document.getElementById("result-text").innerText = `你的中秋能量屬性是：${maxType}`;
-      let imgMap = {
-        發電機: "01.jpg",
-        火焰: "02.jpg",
-        節奏: "03.jpg",
-        鋼鐵: "04.jpg"
-      };
-      document.getElementById("result-img").src = imgMap[maxType];
+      let summary = `🔋 A 發電機: ${counts.A} 題<br>
+🔥 B 火焰: ${counts.B} 題<br>
+🎵 C 節奏: ${counts.C} 題<br>
+🛠️ D 鋼鐵: ${counts.D} 題<br>`;
 
-      // 四能量總計
-      let summary = `發電機：${scores["發電機"]}　火焰：${scores["火焰"]}　節奏：${scores["節奏"]}　鋼鐵：${scores["鋼鐵"]}`;
-      document.getElementById("score-summary").innerText = summary;
+      document.getElementById("result").innerHTML = summary;
 
-      // 作答紀錄
-      document.getElementById("answer-log").innerHTML = answersLog.map(a=>"<p>"+a+"</p>").join("");
-
-      // 複製用文字
-      document.getElementById("copy-text").value = `【中秋節四能量小測驗】\n結果：${maxType}\n${summary}\n作答紀錄：\n` + answersLog.join("\n");
+      let recordHtml = "<h3>📑 你的作答紀錄</h3><ul>";
+      answers.forEach(a => recordHtml += `<li>${a}</li>`);
+      recordHtml += "</ul>";
+      document.getElementById("record").innerHTML = recordHtml;
     }
 
-    function copyResult(){
-      const copyText = document.getElementById("copy-text");
-      copyText.select();
-      document.execCommand("copy");
-      alert("已複製到剪貼簿！");
+    function copyResult() {
+      let text = "【中秋節能量小測驗 - 作答紀錄】\n";
+      text += `A 發電機: ${counts.A} 題\nB 火焰: ${counts.B} 題\nC 節奏: ${counts.C} 題\nD 鋼鐵: ${counts.D} 題\n\n`;
+      text += answers.join("\n");
+      navigator.clipboard.writeText(text).then(() => {
+        alert("✅ 已複製到剪貼簿");
+      });
     }
   </script>
 </body>
